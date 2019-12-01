@@ -9,6 +9,6 @@
 
 BluSpeed
 =========
-BluSpeed is a fork of the Speeduino project focused on developing a very low cost ECU with basic, solid features.
+BluSpeed is a fork of the Speeduino project focused on developing a very low cost ECU with basic, solid features.  Processing is based on the inexpensive STM32F103 "Blue Pill", integrated into the Arduino environment by STM32duino (https://github.com/stm32duino).
 
 The Speeduino project is a flexible, fully featured Engine Management Systems (EMS aka ECU) based on the low cost and open source Arduino platform. It provides all standard engine management functions and is constantly growing to support more features and with wider engine compatibility.
