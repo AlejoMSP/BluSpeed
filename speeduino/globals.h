@@ -29,7 +29,7 @@
 #elif defined(STM32_MCU_SERIES) || defined(ARDUINO_ARCH_STM32) || defined(__STM32F1__) || defined(STM32F4) || defined(STM32)
   //These should be updated to 8 later, but there's bits missing currently
   #define INJ_CHANNELS 4
-  #define IGN_CHANNELS 5
+  #define IGN_CHANNELS 4
 
   #ifndef word
     #define word(h, l) ((h << 8) | l) //word() function not defined for this platform in the main library
@@ -51,12 +51,15 @@
     #define BOARD_H "board_stm32_official.h"
   #else
     #define CORE_STM32_GENERIC
-    #define BOARD_H "board_stm32_generic.h"
+    #define BOARD_H "board_stm32_blue_pill.h"
+    //#define BOARD_H "board_stm32_generic.h"
   #endif
 
   //Specific mode for Bluepill due to its small flash size. This disables a number of strings from being compiled into the flash
   #if defined(MCU_STM32F103C8) || defined(MCU_STM32F103CB)
     #define SMALL_FLASH_MODE
+    #define BOARD_H "board_stm32_blue_pill.h"
+    #define IGN_CHANNELS 4
   #endif
 
   #if __GNUC__ < 7 //Already included on GCC 7

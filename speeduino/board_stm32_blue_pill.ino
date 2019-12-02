@@ -1,15 +1,19 @@
-#if defined(CORE_STM32_GENERIC) && !defined(ARDUINO_BLACK_F407VE)
-#include "board_stm32_generic.h"
+//#if defined(MCU_STM32F103C8) || defined(MCU_STM32F103CB)
+//#if defined(PILL_F103XX)
+
+#include "board_stm32_blue_pill.h"
 #include "globals.h"
 #include "auxiliaries.h"
 #include "idle.h"
 #include "scheduler.h"
 #include "HardwareTimer.h"
+
+
 #if defined(ARDUINO_ARCH_STM32) && defined(STM32_CORE_VERSION)
     //These should really be in the stm32 libmaple libs, but for somereason they only have timers 1-4
-    #include <stm32_TIM_variant_11.h>
-    HardwareTimer Timer5(TIM5, chip_tim5, sizeof(chip_tim5) / sizeof(chip_tim5[0]));
-    HardwareTimer Timer8(TIM8, chip_tim8, sizeof(chip_tim8) / sizeof(chip_tim8[0]));
+    //#include <stm32_TIM_variant_11.h>
+    //HardwareTimer Timer5(TIM5, chip_tim5, sizeof(chip_tim5) / sizeof(chip_tim5[0]));
+    //HardwareTimer Timer8(TIM8, chip_tim8, sizeof(chip_tim8) / sizeof(chip_tim8[0]));
 #endif
 
 void initBoard()
@@ -41,17 +45,11 @@ void initBoard()
     ***********************************************************************************************************
     * Timers
     */
-    #if defined(ARDUINO_BLACK_F407VE) || defined(STM32F4) || defined(_STM32F4_)
-        Timer8.setPeriod(1000);  // Set up period
-        Timer8.setMode(1, TIMER_OUTPUT_COMPARE);
-        Timer8.attachInterrupt(1, oneMSInterval);
-        Timer8.resume(); //Start Timer
-    #else
-        Timer4.setPeriod(1000);  // Set up period
-        Timer4.setMode(1, TIMER_OUTPUT_COMPARE);
-        Timer4.attachInterrupt(1, oneMSInterval);
-        Timer4.resume(); //Start Timer
-    #endif
+    Timer4.setOverflow(1000, MICROSEC_FORMAT);  // Set up period
+    Timer4.setMode(1, TIMER_OUTPUT_COMPARE);
+    Timer4.attachInterrupt(1, oneMSInterval);
+    Timer4.resume(); //Start Timer
+
     pinMode(LED_BUILTIN, OUTPUT); //Visual WDT
 
     /*
@@ -72,19 +70,13 @@ void initBoard()
     ***********************************************************************************************************
     * Schedules
     */
-    #if defined (STM32F1) || defined(__STM32F1__)
-        //(CYCLES_PER_MICROSECOND == 72, APB2 at 72MHz, APB1 at 36MHz).
-        //Timer2 to 4 is on APB1, Timer1 on APB2.   www.st.com/resource/en/datasheet/stm32f103cb.pdf sheet 12
-        Timer1.setPrescaleFactor((72 * 2)-1); //2us resolution
-        Timer2.setPrescaleFactor((36 * 2)-1); //2us resolution
-        Timer3.setPrescaleFactor((36 * 2)-1); //2us resolution
-    #elif defined(STM32F4)
-        //(CYCLES_PER_MICROSECOND == 168, APB2 at 84MHz, APB1 at 42MHz).
-        //Timer2 to 14 is on APB1, Timers 1, 8, 9 and 10 on APB2.   www.st.com/resource/en/datasheet/stm32f407vg.pdf sheet 120
-        Timer1.setPrescaleFactor((168 * 2)-1); //2us resolution
-        Timer2.setPrescaleFactor((84 * 2)-1);  //2us resolution
-        Timer3.setPrescaleFactor((84 * 2)-1);  //2us resolution
-    #endif
+    //#if defined (STM32F1) || defined(__STM32F1__)
+	//(CYCLES_PER_MICROSECOND == 72, APB2 at 72MHz, APB1 at 36MHz).
+	//Timer2 to 4 is on APB1, Timer1 on APB2.   www.st.com/resource/en/datasheet/stm32f103cb.pdf sheet 12
+	Timer1.setPrescaleFactor((72 * 2)-1); //2us resolution
+	Timer2.setPrescaleFactor((36 * 2)-1); //2us resolution
+	Timer3.setPrescaleFactor((36 * 2)-1); //2us resolution
+
     Timer2.setMode(1, TIMER_OUTPUT_COMPARE);
     Timer2.setMode(2, TIMER_OUTPUT_COMPARE);
     Timer2.setMode(3, TIMER_OUTPUT_COMPARE);
@@ -102,44 +94,12 @@ void initBoard()
     Timer2.attachInterrupt(2, fuelSchedule2Interrupt);
     Timer2.attachInterrupt(3, fuelSchedule3Interrupt);
     Timer2.attachInterrupt(4, fuelSchedule4Interrupt);
-    #if (INJ_CHANNELS >= 5)
-    Timer5.setMode(1, TIMER_OUTPUT_COMPARE);
-    Timer5.attachInterrupt(1, fuelSchedule5Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 6)
-    Timer5.setMode(2, TIMER_OUTPUT_COMPARE);
-    Timer5.attachInterrupt(2, fuelSchedule6Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 7)
-    Timer5.setMode(3, TIMER_OUTPUT_COMPARE);
-    Timer5.attachInterrupt(3, fuelSchedule7Interrupt);
-    #endif
-    #if (INJ_CHANNELS >= 8)
-    Timer5.setMode(4, TIMER_OUTPUT_COMPARE);
-    Timer5.attachInterrupt(4, fuelSchedule8Interrupt);
-    #endif
 
     //Ignition
     Timer3.attachInterrupt(1, ignitionSchedule1Interrupt); 
     Timer3.attachInterrupt(2, ignitionSchedule2Interrupt);
     Timer3.attachInterrupt(3, ignitionSchedule3Interrupt);
     Timer3.attachInterrupt(4, ignitionSchedule4Interrupt);
-    #if (IGN_CHANNELS >= 5)
-    Timer4.setMode(1, TIMER_OUTPUT_COMPARE);
-    Timer4.attachInterrupt(1, ignitionSchedule5Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 6)
-    Timer4.setMode(2, TIMER_OUTPUT_COMPARE);
-    Timer4.attachInterrupt(2, ignitionSchedule6Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 7)
-    Timer4.setMode(3, TIMER_OUTPUT_COMPARE);
-    Timer4.attachInterrupt(3, ignitionSchedule7Interrupt);
-    #endif
-    #if (IGN_CHANNELS >= 8)
-    Timer4.setMode(4, TIMER_OUTPUT_COMPARE);
-    Timer4.attachInterrupt(4, ignitionSchedule8Interrupt);
-    #endif
 
     Timer1.setOverflow(0xFFFF);
     Timer1.resume();
@@ -147,14 +107,6 @@ void initBoard()
     Timer2.resume();
     Timer3.setOverflow(0xFFFF);
     Timer3.resume();
-    #if (IGN_CHANNELS >= 5)
-    Timer4.setOverflow(0xFFFF);
-    Timer4.resume();
-    #endif
-    #if (INJ_CHANNELS >= 5)
-    Timer5.setOverflow(0xFFFF);
-    Timer5.resume();
-    #endif
 }
 
 uint16_t freeRam()
@@ -163,4 +115,21 @@ uint16_t freeRam()
     return &top - reinterpret_cast<char*>(sbrk(0));
 }
 
-#endif
+  /*
+  ***********************************************************************************************************
+  * Interrupt callback functions
+  */
+  void oneMSInterval(HardwareTimer*){oneMSInterval();}
+  void boostInterrupt(HardwareTimer*){boostInterrupt();}
+  void fuelSchedule1Interrupt(HardwareTimer*){fuelSchedule1Interrupt();}
+  void fuelSchedule2Interrupt(HardwareTimer*){fuelSchedule2Interrupt();}
+  void fuelSchedule3Interrupt(HardwareTimer*){fuelSchedule3Interrupt();}
+  void fuelSchedule4Interrupt(HardwareTimer*){fuelSchedule4Interrupt();}
+  void idleInterrupt(HardwareTimer*){idleInterrupt();}
+  void vvtInterrupt(HardwareTimer*){vvtInterrupt();}
+  void ignitionSchedule1Interrupt(HardwareTimer*){ignitionSchedule1Interrupt();}
+  void ignitionSchedule2Interrupt(HardwareTimer*){ignitionSchedule2Interrupt();}
+  void ignitionSchedule3Interrupt(HardwareTimer*){ignitionSchedule3Interrupt();}
+  void ignitionSchedule4Interrupt(HardwareTimer*){ignitionSchedule4Interrupt();}
+
+//#endif

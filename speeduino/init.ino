@@ -883,6 +883,7 @@ void initialiseAll()
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
+#ifndef CUSTOM_BOARD
 void setPinMapping(byte boardID)
 {
   switch (boardID)
@@ -2111,6 +2112,7 @@ void setPinMapping(byte boardID)
   triggerSec_pin_mask = digitalPinToBitMask(pinTrigger2);
 
 }
+#endif
 
 void initialiseTriggers()
 {

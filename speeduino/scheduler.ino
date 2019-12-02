@@ -445,6 +445,7 @@ static inline void refreshIgnitionSchedule1(unsigned long timeToEnd)
   }
 }
 
+#if IGN_CHANNELS >= 2
 void setIgnitionSchedule2(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule2.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -468,6 +469,8 @@ void setIgnitionSchedule2(void (*startCallback)(), unsigned long timeout, unsign
     IGN2_TIMER_ENABLE();
   }
 }
+#endif
+#if IGN_CHANNELS >= 3
 void setIgnitionSchedule3(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule3.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -500,6 +503,8 @@ void setIgnitionSchedule3(void (*startCallback)(), unsigned long timeout, unsign
     ignitionSchedule3.hasNextSchedule = true;
   }
 }
+#endif
+#if IGN_CHANNELS >= 4
 void setIgnitionSchedule4(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule4.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -532,6 +537,8 @@ void setIgnitionSchedule4(void (*startCallback)(), unsigned long timeout, unsign
     ignitionSchedule4.hasNextSchedule = true;
   }
 }
+#endif
+#if IGN_CHANNELS >= 5
 void setIgnitionSchedule5(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule5.Status != RUNNING)//Check that we're not already part way through a schedule
@@ -556,6 +563,8 @@ void setIgnitionSchedule5(void (*startCallback)(), unsigned long timeout, unsign
     IGN5_TIMER_ENABLE();
   }
 }
+#endif
+#if IGN_CHANNELS >= 6
 void setIgnitionSchedule6(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule6.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -588,6 +597,8 @@ void setIgnitionSchedule6(void (*startCallback)(), unsigned long timeout, unsign
     ignitionSchedule6.hasNextSchedule = true;
   }
 }
+#endif
+#if IGN_CHANNELS >= 7
 void setIgnitionSchedule7(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule7.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -620,6 +631,8 @@ void setIgnitionSchedule7(void (*startCallback)(), unsigned long timeout, unsign
     ignitionSchedule7.hasNextSchedule = true;
   }
 }
+#endif
+#if IGN_CHANNELS >= 8
 void setIgnitionSchedule8(void (*startCallback)(), unsigned long timeout, unsigned long duration, void(*endCallback)())
 {
   if(ignitionSchedule8.Status != RUNNING) //Check that we're not already part way through a schedule
@@ -652,7 +665,7 @@ void setIgnitionSchedule8(void (*startCallback)(), unsigned long timeout, unsign
     ignitionSchedule8.hasNextSchedule = true;
   }
 }
-
+#endif
 /*******************************************************************************************************************************************************************************************************/
 //This function (All 8 ISR functions that are below) gets called when either the start time or the duration time are reached
 //This calls the relevant callback function (startCallback or endCallback) depending on the status of the schedule.
