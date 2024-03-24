@@ -159,7 +159,7 @@
 HardwareTimer Timer1(TIM1);
 HardwareTimer Timer2(TIM2);
 HardwareTimer Timer3(TIM3);
-HardwareTimer Timer4(TIM4);
+//HardwareTimer Timer4(TIM4);
 
 
 void oneMSInterval(HardwareTimer*);
